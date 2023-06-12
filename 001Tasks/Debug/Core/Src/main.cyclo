@@ -1,0 +1,10 @@
+stm32wbxx_ll_rcc.h:1679:22:LL_RCC_LSE_SetDriveCapability	1
+stm32wbxx_ll_bus.h:539:22:LL_AHB2_GRP1_EnableClock	1
+main.c:72:5:main	3
+main.c:153:6:SystemClock_Config	3
+main.c:207:6:PeriphCommonClock_Config	2
+main.c:231:13:MX_GPIO_Init	1
+main.c:279:13:task1_handler	1
+main.c:292:13:task2_handler	1
+main.c:315:6:HAL_TIM_PeriodElapsedCallback	2
+main.c:332:6:Error_Handler	1

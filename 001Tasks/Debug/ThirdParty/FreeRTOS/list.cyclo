@@ -1,0 +1,5 @@
+list.c:48:6:vListInitialise	1
+list.c:73:6:vListInitialiseItem	1
+list.c:85:6:vListInsertEnd	1
+list.c:115:6:vListInsert	3
+list.c:183:13:uxListRemove	2
