@@ -1,0 +1,11 @@
+stm32wbxx_ll_rcc.h:1679:22:LL_RCC_LSE_SetDriveCapability	1
+stm32wbxx_ll_bus.h:539:22:LL_AHB2_GRP1_EnableClock	1
+main.c:72:5:main	4
+main.c:164:6:SystemClock_Config	3
+main.c:218:6:PeriphCommonClock_Config	2
+main.c:242:13:MX_GPIO_Init	1
+main.c:290:13:BlueLedHandler	1
+main.c:309:13:GreenLedHandler	1
+main.c:328:13:RedLedHandler	1
+main.c:355:6:HAL_TIM_PeriodElapsedCallback	2
+main.c:372:6:Error_Handler	1
