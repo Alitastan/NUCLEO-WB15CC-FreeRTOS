@@ -408,6 +408,11 @@ static void BtnHandler(void* param)
 
 }
 
+void vApplicationIdleHook( void )
+{
+	HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
+}
+
 /* USER CODE END 4 */
 
 /**

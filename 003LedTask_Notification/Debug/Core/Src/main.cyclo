@@ -8,5 +8,6 @@ main.c:305:13:BlueLedHandler	2
 main.c:329:13:GreenLedHandler	2
 main.c:352:13:RedLedHandler	2
 main.c:376:13:BtnHandler	4
-main.c:421:6:HAL_TIM_PeriodElapsedCallback	2
-main.c:438:6:Error_Handler	1
+main.c:411:6:vApplicationIdleHook	1
+main.c:426:6:HAL_TIM_PeriodElapsedCallback	2
+main.c:443:6:Error_Handler	1
