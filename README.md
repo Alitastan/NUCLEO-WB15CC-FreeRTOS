@@ -14,6 +14,8 @@
 
 *003LedTasks_Notification* is an example of 3 LEDs and 1 button task. Button2 of NUCLEO-WB15CC board is used to trigger the LED blinking. Press the button 4 times and see for yourself!
 
+*004LedBtnFromISR* is similar to 003LedTasks_Notification, it demonstrates how to notify a task from interrupt service routine triggered by the button-2 press.
+
 https://www.udemy.com/course/mastering-rtos-hands-on-with-freertos-arduino-and-stm32fx/
 
 
