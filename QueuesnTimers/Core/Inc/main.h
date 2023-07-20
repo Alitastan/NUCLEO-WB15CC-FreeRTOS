@@ -82,7 +82,7 @@ void Error_Handler(void);
 #define LD1_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-
+#define DWT_CTRL (*(volatile uint32_t*)0xE0001000)
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

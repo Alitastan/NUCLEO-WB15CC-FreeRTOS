@@ -32,7 +32,7 @@ void LedEffect1(void)
 void LedEffect2(void)
 {
 	static int flag = 1;
-	(flag ^= 1) ? TurnOnEvenLeds() : TurnOnOddLeds();
+	(flag ^= 1) ? TurnOnOddLeds() : TurnOnEvenLeds();
 }
 
 

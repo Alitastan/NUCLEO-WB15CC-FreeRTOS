@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -104,6 +105,10 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  // Enable the CYCCNT counter for Arm Cortex M3/M4 processor register
+
+  DWT_CTRL |= (1 << 0);
+
   BaseType_t status;
 
   status = xTaskCreate(menuTask, "Menu-Task", 250, NULL, 2, &hMenu);
@@ -112,8 +117,8 @@ int main(void)
   status = xTaskCreate(ledTask, "Led-Task", 250, NULL, 2, &hLed);
   configASSERT(status == pdPASS);
 
-  status = xTaskCreate(RTCTask, "RTC-Task", 250, NULL, 2, &hRTC);
-  configASSERT(status == pdPASS);
+  //status = xTaskCreate(RTCTask, "RTC-Task", 250, NULL, 2, &hRTC);
+  //configASSERT(status == pdPASS);
 
   status = xTaskCreate(printTask, "Print-Task", 250, NULL, 2, &hPrint);
   configASSERT(status == pdPASS);
@@ -343,7 +348,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pins : LD2_Pin LD3_Pin LD1_Pin */
   GPIO_InitStruct.Pin = LD2_Pin|LD3_Pin|LD1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
