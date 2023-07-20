@@ -9,16 +9,6 @@
 
 #include "task_handler.h"
 
-typedef struct
-{
-	uint8_t payload[10]; // stores data bytes of the command
-	uint8_t len;	// command length
-}Command_t;
-
-
-int extract_command(Command_t* command);
-void process_command(Command_t* command);
-
 State_t currentProgramState = sMainMenu;
 
 const char* invalid_message = "~~Invalid Message~~\n";
@@ -82,8 +72,52 @@ void menuTask(void* parameters)
 
 void ledTask(void* parameters)
 {
+	uint32_t command_adr;
+	Command_t* command;
+
+	const char* led_message = 	"=====================\n"
+								"|		LED EFFECT		|\n"
+								"=====================\n"
+								"OPTIONS: Please type none, e1, e2 or e3.\n"
+								"ENTER YOUR CHOICE HERE... :\n ";
 	while(1)
 	{
+		/* Wait for notification */
+		xTaskNotifyWait(0,0,NULL,portMAX_DELAY);
+
+		/* Print LED menu */
+		xQueueSend(hPrintQueue,&led_message,portMAX_DELAY);
+
+		/* Wait for LED commands */
+		xTaskNotifyWait(0,0,&command_adr,portMAX_DELAY);
+
+		command = (Command_t*)command_adr;
+
+		if( (command->len) <= 4)
+		{
+			if(! strncmp((char*)command->payload, "none", strlen("none")) )
+				led_effect_stop();
+			else if(! strncmp((char*)command->payload, "e1", strlen("e1")) )
+				led_effect(1);
+			else if(! strncmp((char*)command->payload, "e2", strlen("e2")) )
+				led_effect(2);
+			else if(! strncmp((char*)command->payload, "e3", strlen("e3")) )
+				led_effect(3);
+			else
+				// Print invalid message
+				xQueueSend(hPrintQueue,&invalid_message,portMAX_DELAY);
+		}
+		else
+			// Print invalid message
+			xQueueSend(hPrintQueue,&invalid_message,portMAX_DELAY);
+
+		// Update the state variable
+		currentProgramState = sMainMenu;
+
+		// Notify menu task
+		xTaskNotify(hMenu,0,eNoAction);
+
+
 
 	}
 }
@@ -111,18 +145,23 @@ void printTask(void* parameters)
 	 Command_t command;
 		while(1)
 		{
-			/* TODO: Implement notify wait */
+			/* Implement notify wait */
 			status = xTaskNotifyWait(0,0,NULL,portMAX_DELAY);
 			if(status == pdTRUE)
 			{
-				process_command(&command);
+				/* Process the user data(command) stored in input data queue */
+				/* Notify the command to relevant task */
+				processCommand(&command);
 			}
-			/* TODO: Process the user data(command) stored in input data queue */
-			/* TODO: Notify the command to relevant task */
+
 		}
 }
 
- void process_command(Command_t* command)
+/* The notification value of the target task is
+ * unconditionally set to ulValue when eSetValueWithOverwrite
+ * is used.   */
+
+ void processCommand(Command_t* command)
  {
 	 /* Extract the data bytes from the input data queue and form a command */
 	 extract_command(command);
@@ -155,12 +194,14 @@ void printTask(void* parameters)
 	 uint8_t item;
 	 BaseType_t status;
 
+	 // Return the number of messages stored in a queue.
 	 status = uxQueueMessagesWaiting(hInputDataQueue);
 	 if(!status) return -1;
 
 	 uint8_t i = 0;
 	 do
 	 {
+		 // Received item into the hInputDataQueue will be copied to item buffer.
 		 status = xQueueReceive(hInputDataQueue, (void*)&item, 0);
 		 if(status == pdTRUE) command -> payload[i++] = item;
 	 }while(item != '\n');
