@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -47,8 +46,11 @@ UART_HandleTypeDef huart1;
 /* USER CODE BEGIN PV */
 TaskHandle_t hMenu,hLed,hRTC,hPrint,hCommand;
 QueueHandle_t hInputDataQueue, hPrintQueue;
+TimerHandle_t hLedTimer[3];
 
 uint8_t user_data;
+
+
 
 /* USER CODE END PV */
 
@@ -126,6 +128,12 @@ int main(void)
    * Since a pointer is unsigned long int we used sizeof(unsigned long int) */
   hPrintQueue = xQueueCreate(10, sizeof(size_t));
   configASSERT(hPrintQueue != NULL);
+
+  // Create timers for LED effects
+  for(uint8_t i = 0; i < 3; i++)
+	  hLedTimer[i] = xTimerCreate("Led Timer",pdMS_TO_TICKS(500),pdTRUE,(void*)(i+1),LedEffectCbx);
+
+
 
   HAL_UART_Receive_IT(&huart1, &user_data, sizeof(uint8_t));
 
@@ -350,6 +358,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {

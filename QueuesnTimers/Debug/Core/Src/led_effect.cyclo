@@ -1,2 +1,11 @@
-led_effect.c:11:6:led_effect_stop	1
-led_effect.c:16:6:led_effect	1
+led_effect.c:12:6:LedStartTimer	1
+led_effect.c:20:6:LedEffectStop	2
+led_effect.c:26:6:LedEffect1	2
+led_effect.c:32:6:LedEffect2	2
+led_effect.c:41:6:LedEffect3	1
+led_effect.c:46:6:LedControl	1
+led_effect.c:52:6:TurnOnAllLeds	1
+led_effect.c:59:6:TurnOffAllLeds	1
+led_effect.c:66:6:TurnOnOddLeds	1
+led_effect.c:73:6:TurnOnEvenLeds	1
+led_effect.c:80:6:LedEffectCbx	5

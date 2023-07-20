@@ -13,6 +13,8 @@
 #include "queue.h"
 #include <stdio.h>
 #include <string.h>
+#include "stm32wbxx_hal.h"
+#include "led_effect.h"
 
 #define LED_EFFECT	0
 #define DATE_TIME	1

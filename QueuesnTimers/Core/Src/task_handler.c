@@ -96,13 +96,13 @@ void ledTask(void* parameters)
 		if( (command->len) <= 4)
 		{
 			if(! strncmp((char*)command->payload, "none", strlen("none")) )
-				led_effect_stop();
+				LedEffectStop();
 			else if(! strncmp((char*)command->payload, "e1", strlen("e1")) )
-				led_effect(1);
+				LedStartTimer(1);
 			else if(! strncmp((char*)command->payload, "e2", strlen("e2")) )
-				led_effect(2);
+				LedStartTimer(2);
 			else if(! strncmp((char*)command->payload, "e3", strlen("e3")) )
-				led_effect(3);
+				LedStartTimer(3);
 			else
 				// Print invalid message
 				xQueueSend(hPrintQueue,&invalid_message,portMAX_DELAY);
@@ -132,9 +132,11 @@ void RTCTask(void* parameters)
 
 void printTask(void* parameters)
 {
+	uint32_t* message;
 	while(1)
 	{
-
+		xQueueReceive(hPrintQueue, &message, portMAX_DELAY);
+		HAL_UART_Transmit(&huart1, (uint8_t*)message, strlen((char*)message), HAL_MAX_DELAY);
 	}
 }
 
