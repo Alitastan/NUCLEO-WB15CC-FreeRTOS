@@ -20,13 +20,13 @@ void menuTask(void* parameters)
 
 	int8_t option;
 
-	const char* entry_message = "=====================\n"
-								"|		MENU		|\n"
-								"=====================\n"
-									"LED EFFECT	--->  0\n"
-									"DATE & TIME	--->  1\n"
-									"EXIT	--->  2\n"
-									"ENTER YOUR CHOICE HERE... :\n ";
+	const char* entry_message = "======================\n"
+								"|	MENU		|\n"
+								"======================\n"
+									"LED EFFECT	--->	0\n"
+									"DATE & TIME	--->	1\n"
+									"EXIT	--->	2\n"
+									"ENTER YOUR CHOICE HERE... : ";
 	while(1)
 	{
 		xQueueSend(hPrintQueue,&entry_message,portMAX_DELAY);
@@ -77,7 +77,7 @@ void ledTask(void* parameters)
 	Command_t* command;
 
 	const char* led_message = 	"=====================\n"
-								"|  LED EFFECT  |\n"
+								"|	LED EFFECT	|\n"
 								"=====================\n"
 								"OPTIONS: Please type none, e1, e2 or e3.\n"
 								"ENTER YOUR CHOICE HERE... :\n ";

@@ -25,27 +25,47 @@ void LedEffectStop(void)
 
 void LedEffect1(void)
 {
-	static int flag = 1;
+	static uint16_t flag = 1;
 	(flag ^= 1) ? TurnOffAllLeds() : TurnOnAllLeds();
 }
 
 void LedEffect2(void)
 {
-	static int flag = 1;
+	static uint16_t flag = 1;
 	(flag ^= 1) ? TurnOnOddLeds() : TurnOnEvenLeds();
 }
 
 
-/* TODO: Implement LedEffect3 and LedControl */
+/* TODO: Try to fix the order of blinking. It starts blinking
+ * with BLUE LED and goes in reverse direction. */
 
 void LedEffect3(void)
 {
+	static uint16_t i = 0;
+	// 1 << 0 : 1	(0x1)
+	// 1 << 1 : 2	(0x2)
+	// 1 << 2 : 4	(0x4)
+	// 1 << 3 : 8	(0x8)
+	// 1 << 4 : 16	(0x10)
+	// 1 << 5 : 32	(0x20)
+	// 1 << 6 : 64	(0x40)
+	LedControl( 0x1 << (i++ % 6) );
 
+	if (i % 6 == 0)
+	{
+		// Reset i
+		i = 0;
+	}
+	else
+	{
+		// Do nothing.
+	}
 }
 
-void LedControl(void)
+void LedControl(uint8_t value)
 {
-
+	for( uint8_t i = 0; i < 6; i++ )
+		HAL_GPIO_WritePin( GPIOB, ( BLUE_LED >> i), ((value >> i))& 0x1 );
 }
 
 
@@ -77,6 +97,7 @@ void TurnOnEvenLeds(void)
 	HAL_GPIO_WritePin(GPIOB, RED_LED, GPIO_PIN_RESET);
 }
 
+/* Timer callback function. It is called whenever a timer ends */
 void LedEffectCbx(TimerHandle_t xTimer)
 {
 	uint32_t id;
@@ -86,10 +107,13 @@ void LedEffectCbx(TimerHandle_t xTimer)
 	{
 	case LED_EFFECT1:
 		LedEffect1();
+		break;
 	case LED_EFFECT2:
 		LedEffect2();
+		break;
 	case LED_EFFECT3:
 		LedEffect3();
+		break;
 	}
 
 }

@@ -14,13 +14,11 @@
 #include <stdint.h>
 #include "stm32wbxx_hal.h"
 
-#define LD1_Pin GPIO_PIN_5
-#define LD2_Pin GPIO_PIN_0
-#define LD3_Pin GPIO_PIN_1
 
-#define BLUE_LED LD1_Pin
-#define GREEN_LED LD2_Pin
-#define RED_LED	LD3_Pin
+
+#define BLUE_LED GPIO_PIN_5
+#define GREEN_LED GPIO_PIN_0
+#define RED_LED	GPIO_PIN_1
 
 #define LED_EFFECT1	1
 #define LED_EFFECT2	2
@@ -32,6 +30,7 @@ void LedStartTimer(uint8_t n);
 void LedEffect1(void);
 void LedEffect2(void);
 void LedEffect3(void);
+void LedControl(uint8_t value);
 void TurnOnAllLeds(void);
 void TurnOffAllLeds(void);
 void TurnOnOddLeds(void);
