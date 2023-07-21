@@ -125,10 +125,157 @@ void ledTask(void* parameters)
 
 void RTCTask(void* parameters)
 {
+	const char* msg_rtc = 	"========================\n"
+							"|         RTC          |\n"
+							"========================\n"
+							"Configure Time            ----> 0\n"
+							"Configure Date            ----> 1\n"
+							"Enable reporting          ----> 2\n"
+							"Exit to main menu         ----> 3\n"
+							"Enter your choice here : ";
+
+
+	const char *msg_rtc_hh = "Enter hour(1-12):";
+	const char *msg_rtc_mm = "Enter minutes(0-59):";
+	const char *msg_rtc_ss = "Enter seconds(0-59):";
+
+	const char *msg_rtc_dd  = "Enter date(1-31):";
+	const char *msg_rtc_mo  ="Enter month(1-12):";
+	const char *msg_rtc_dow  = "Enter day(1-7 sun:1):";
+	const char *msg_rtc_yr  = "Enter year(0-99):";
+
+	const char *msg_conf = "Configuration successful\n";
+	const char *msg_rtc_report = "Enable time&date reporting(y/n)?: ";
+
+
+	uint32_t command_adr;
+	Command_t* command;
+
+	int8_t option;
+
+	static int8_t rtcState;
+
+	RTC_TimeTypeDef time;
+
 	while(1)
 	{
+		/* Notify wait (wait till someone notifies) */
+		xTaskNotifyWait(0,0,NULL,portMAX_DELAY);
 
-	}
+		/* Print the menu and show current date and time information */
+
+		xQueueSend(hPrintQueue,&msg_rtc,portMAX_DELAY);
+
+		ShowTimeDate();
+
+		while(currentProgramState != sMainMenu)
+		{
+
+			/*TODO: Wait for command notification (Notify wait) */
+			xTaskNotifyWait(0,0,&command_adr,portMAX_DELAY);
+
+			command = (Command_t*)command_adr;
+
+			switch(currentProgramState)
+			{
+
+				case sRtcMenu:{
+					/* process RTC menu commands */
+					if( command->len == 1)
+					{
+						// Converting ASCII to number by subtracting 48
+						option = command->payload[0] - 48;
+
+						switch(option)
+						{
+						case DATE_CONFIG:
+							currentProgramState = sRtcTimeConfig;
+							xQueueSend(hPrintQueue,&msg_rtc_hh,portMAX_DELAY);
+							break;
+						case MONTH_CONFIG:
+							currentProgramState = sRtcDateConfig;
+							xQueueSend(hPrintQueue,&msg_rtc_dd,portMAX_DELAY);
+							break;
+						case YEAR_CONFIG:
+							currentProgramState = sRtcReport;
+							xQueueSend(hPrintQueue,&msg_rtc_report,portMAX_DELAY);
+							break;
+						case DAY_CONFIG:
+							currentProgramState = sMainMenu;
+							break;
+						default:
+							currentProgramState = sMainMenu;
+							xQueueSend(hPrintQueue,&invalid_message,portMAX_DELAY);
+						}
+					}
+					else
+					{
+						currentProgramState = sMainMenu;
+						xQueueSend(hPrintQueue,&invalid_message,portMAX_DELAY);
+					}
+
+
+					break;}
+
+				case sRtcTimeConfig:{
+
+					/* get hh, mm, ss infor and configure RTC */
+					/* take care of invalid entries */
+					switch(rtcState)
+					{
+					case HH_CONFIG:{
+						uint8_t hour = getNumber(command->payload, command->len);
+						time.Hours = hour;
+						rtcState = MM_CONFIG;
+						xQueueSend(hPrintQueue,&msg_rtc_mm,portMAX_DELAY);
+						break;}
+
+					case MM_CONFIG:{
+						uint8_t minute = getNumber(command->payload, command->len);
+						time.Minutes = minute;
+						rtcState = SS_CONFIG;
+						xQueueSend(hPrintQueue,&msg_rtc_ss,portMAX_DELAY);
+						break;}
+
+					case SS_CONFIG:{
+						uint8_t second = getNumber(command->payload, command->len);
+						time.Seconds = second;
+						if(! ValidateRtcInfo(&time,NULL) )
+						{
+							RtcConfigureTime(&time);
+							xQueueSend(hPrintQueue, &msg_conf, portMAX_DELAY);
+							ShowTimeDate();
+						}
+						else
+							xQueueSend(hPrintQueue,&invalid_message, portMAX_DELAY);
+
+						currentProgramState = sMainMenu;
+						rtcState = HH_CONFIG;
+						break;}
+					}
+
+					break;}
+
+				case sRtcDateConfig:
+
+					/*TODO : get date, month, day , year info and configure RTC */
+
+					/*TODO: take care of invalid entries */
+
+					break;
+
+				case sRtcReport:
+					/*TODO: enable or disable RTC current time reporting over ITM printf */
+					break;
+
+			}// switch end
+
+		} //while end
+
+		/* Notify menu task */
+		xTaskNotify(hMenu,0,eNoAction);
+
+		}//while super loop end
 }
 
 void printTask(void* parameters)
@@ -213,4 +360,20 @@ void printTask(void* parameters)
 	 command -> len = i-1; /* Save length of the command excluding null char */
 
 	 return 0;
+ }
+
+ uint8_t getNumber(uint8_t * p, int len)
+ {
+	 int value;
+
+	 if(len > 1)
+	 {
+		 value = ( ( (p[0]-48) * 10 ) + (p[1] - 48 ) );
+	 }
+	 else
+	 {
+		 value = p[0] - 48;
+	 }
+
+	 return value;
  }

@@ -117,8 +117,8 @@ int main(void)
   status = xTaskCreate(ledTask, "Led-Task", 250, NULL, 2, &hLed);
   configASSERT(status == pdPASS);
 
-  //status = xTaskCreate(RTCTask, "RTC-Task", 250, NULL, 2, &hRTC);
-  //configASSERT(status == pdPASS);
+  status = xTaskCreate(RTCTask, "RTC-Task", 250, NULL, 2, &hRTC);
+  configASSERT(status == pdPASS);
 
   status = xTaskCreate(printTask, "Print-Task", 250, NULL, 2, &hPrint);
   configASSERT(status == pdPASS);
@@ -255,7 +255,7 @@ static void MX_RTC_Init(void)
   /** Initialize RTC Only
   */
   hrtc.Instance = RTC;
-  hrtc.Init.HourFormat = RTC_HOURFORMAT_12;
+  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
   hrtc.Init.AsynchPrediv = 127;
   hrtc.Init.SynchPrediv = 255;
   hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;

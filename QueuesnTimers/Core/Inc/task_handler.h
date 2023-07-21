@@ -15,10 +15,20 @@
 #include <string.h>
 #include "stm32wbxx_hal.h"
 #include "led_effect.h"
+#include "rtc.h"
 
 #define LED_EFFECT	0
 #define DATE_TIME	1
 #define	EXIT_MENU	2
+
+#define DATE_CONFIG		0
+#define	MONTH_CONFIG	1
+#define	YEAR_CONFIG		2
+#define	DAY_CONFIG		3
+
+#define HH_CONFIG	0
+#define MM_CONFIG	1
+#define SS_CONFIG	2
 
 typedef struct
 {
@@ -45,6 +55,8 @@ void commandTask(void* parameters);
 
 int extract_command(Command_t* command);
 void processCommand(Command_t* command);
+
+uint8_t getNumber(uint8_t * p, int len);
 
 extern TaskHandle_t hMenu,hLed,hRTC,hPrint,hCommand;
 extern QueueHandle_t hInputDataQueue, hPrintQueue;
