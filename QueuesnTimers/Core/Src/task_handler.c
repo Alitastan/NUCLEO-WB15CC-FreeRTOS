@@ -51,6 +51,7 @@ void menuTask(void* parameters)
 				break;
 			case EXIT_MENU:
 				/* Todo: implement exit */
+				//HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
 				break;
 			default:
 				xQueueSend(hPrintQueue,&entry_message,portMAX_DELAY);
@@ -130,22 +131,22 @@ void RTCTask(void* parameters)
 							"========================\n"
 							"Configure Time            ----> 0\n"
 							"Configure Date            ----> 1\n"
-							"Enable reporting          ----> 2\n"
+							"Enable/Disable reporting  ----> 2\n"
 							"Exit to main menu         ----> 3\n"
 							"Enter your choice here : ";
 
 
-	const char *msg_rtc_hh = "Enter hour(1-12):";
-	const char *msg_rtc_mm = "Enter minutes(0-59):";
-	const char *msg_rtc_ss = "Enter seconds(0-59):";
+	const char *msg_rtc_hh = "Enter Hour(1-24):";
+	const char *msg_rtc_mm = "Enter Minutes(0-59):";
+	const char *msg_rtc_ss = "Enter Seconds(0-59):";
 
-	const char *msg_rtc_dd  = "Enter date(1-31):";
-	const char *msg_rtc_mo  ="Enter month(1-12):";
-	const char *msg_rtc_dow  = "Enter day(1-7 sun:1):";
-	const char *msg_rtc_yr  = "Enter year(0-99):";
+	const char *msg_rtc_dd  = "Enter Date(1-31):";
+	const char *msg_rtc_mo  ="Enter Month(1-12):";
+	const char *msg_rtc_dow  = "Enter Day(1-7 [Sunday:1]):";
+	const char *msg_rtc_yr  = "Enter Year(0-99):";
 
 	const char *msg_conf = "Configuration successful\n";
-	const char *msg_rtc_report = "Enable time&date reporting(y/n)?: ";
+	const char *msg_rtc_report = "Enable/Disable Time & Date Reporting(y/n)?: ";
 
 
 	uint32_t command_adr;
@@ -310,7 +311,29 @@ void RTCTask(void* parameters)
 					break;
 
 				case sRtcReport:{
-					/*TODO: enable or disable RTC current time reporting over ITM printf */
+					/* enable or disable RTC current time reporting over ITM printf */
+					if(command->len == 1)
+					{
+						if(command->payload[0] == 'y')
+						{
+							if(xTimerIsTimerActive(RtcTimer) == pdFALSE)
+								xTimerStart(RtcTimer,portMAX_DELAY);
+
+
+						}
+						else if(command->payload[0] == 'n')
+						{
+							xTimerStop(RtcTimer,portMAX_DELAY);
+						}
+						else
+							xQueueSend(hPrintQueue,&invalid_message,portMAX_DELAY);
+
+					}
+					else
+						xQueueSend(hPrintQueue,&invalid_message,portMAX_DELAY);
+
+
+					currentProgramState = sMainMenu;
 					break;}
 
 			}// switch end

@@ -85,3 +85,29 @@ int ValidateRtcInfo(RTC_TimeTypeDef *time , RTC_DateTypeDef *date)
 
 	return 0;
 }
+
+void ShowRealTimeDate_ITM(void)
+{
+	RTC_DateTypeDef rtcDate;
+	RTC_TimeTypeDef rtcTime;
+
+	memset(&rtcDate,0,sizeof(rtcDate));
+	memset(&rtcTime,0,sizeof(rtcTime));
+
+	/* Get the RTC current Time */
+	HAL_RTC_GetTime(&hrtc, &rtcTime, RTC_FORMAT_BIN);
+
+	/* Get the RTC Current Date */
+	HAL_RTC_GetDate(&hrtc, &rtcDate, RTC_FORMAT_BIN);
+
+	char * format;
+	format = (rtcTime.TimeFormat == RTC_HOURFORMAT_24) ? "24 Hours Format" : "12 Hours Format";
+
+	printf("%02d:%02d:%02d [%s]",rtcTime.Hours, rtcTime.Minutes, rtcTime.Seconds,format);
+	printf("\t%02d-%02d-%2d\n",rtcDate.Month, rtcDate.Date, 2000 + rtcDate.Year);
+}
+
+void RtcTimerCbx(TimerHandle_t xTimer)
+{
+	ShowRealTimeDate_ITM();
+}

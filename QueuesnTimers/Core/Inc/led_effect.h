@@ -38,6 +38,7 @@ void TurnOnEvenLeds(void);
 
 void LedEffectCbx(TimerHandle_t xTimer);
 
+
 extern TimerHandle_t hLedTimer[3];
 extern UART_HandleTypeDef huart1;
 

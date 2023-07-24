@@ -48,6 +48,7 @@ UART_HandleTypeDef huart1;
 TaskHandle_t hMenu,hLed,hRTC,hPrint,hCommand;
 QueueHandle_t hInputDataQueue, hPrintQueue;
 TimerHandle_t hLedTimer[3];
+TimerHandle_t RtcTimer;
 
 uint8_t user_data;
 
@@ -137,6 +138,9 @@ int main(void)
   // Create timers for LED effects
   for(uint8_t i = 0; i < 3; i++)
 	  hLedTimer[i] = xTimerCreate("Led Timer",pdMS_TO_TICKS(500),pdTRUE,(void*)(i+1),LedEffectCbx);
+
+  // Create timer for RTC report
+  RtcTimer = xTimerCreate("RTC Timer", pdMS_TO_TICKS(1000), pdTRUE, NULL, RtcTimerCbx);
 
 
 
