@@ -1,5 +1,6 @@
 # NUCLEO-WB15CC FreeRTOS 
 
+- All the projects are implemented and tested over NUCLEO-WB15CC board.
 - The projects here are examples of NON CMSIS manual FreeRTOS implementation.
 - FreeRTOS Kernel **V10.4.3** is used.
 - The application code is being written on **STM32CubeIDE version 1.12.0**
