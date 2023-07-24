@@ -12,8 +12,8 @@
 
 void ShowTimeDate(void)
 {
-	static char showTime[40];
-	static char showDate[40];
+	static char showTime[100];
+	static char showDate[100];
 
 	RTC_DateTypeDef rtcDate;
 	RTC_TimeTypeDef rtcTime;
@@ -51,7 +51,7 @@ void ShowTimeDate(void)
 			"\t%02d-%02d-%2d\n",
 			rtcDate.Month,
 			rtcDate.Date,
-			rtcDate.Year);
+			2000 + rtcDate.Year);
 
 	xQueueSend( hPrintQueue, &date, portMAX_DELAY);
 
@@ -60,6 +60,8 @@ void ShowTimeDate(void)
 void RtcConfigureTime(RTC_TimeTypeDef * time)
 {
 	time->TimeFormat = RTC_HOURFORMAT_24;
+	time->DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+	time->StoreOperation = RTC_STOREOPERATION_RESET;
 	HAL_RTC_SetTime(&hrtc, time, RTC_FORMAT_BIN);
 
 }

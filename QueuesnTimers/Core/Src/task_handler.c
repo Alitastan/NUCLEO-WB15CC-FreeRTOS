@@ -153,9 +153,10 @@ void RTCTask(void* parameters)
 
 	int8_t option;
 
-	static int8_t rtcState;
+	static int8_t rtcState = 0;
 
 	RTC_TimeTypeDef time;
+	RTC_DateTypeDef date;
 
 	while(1)
 	{
@@ -256,17 +257,61 @@ void RTCTask(void* parameters)
 
 					break;}
 
-				case sRtcDateConfig:
+				case sRtcDateConfig:{
 
-					/*TODO : get date, month, day , year info and configure RTC */
+					/* get date, month, day , year info and configure RTC */
 
-					/*TODO: take care of invalid entries */
+					/* take care of invalid entries */
+
+					switch(rtcState)
+					{
+					case DATE_CONFIG:{
+						uint8_t d = getNumber(command->payload, command->len);
+						date.Date = d;
+						rtcState = MONTH_CONFIG;
+						xQueueSend(hPrintQueue,&msg_rtc_mo,portMAX_DELAY);
+						break;}
+
+					case MONTH_CONFIG:{
+						uint8_t month = getNumber(command->payload, command->len);
+						date.Month = month;
+						rtcState = DAY_CONFIG;
+						xQueueSend(hPrintQueue, &msg_rtc_dow, portMAX_DELAY);
+						break;}
+
+					case DAY_CONFIG:{
+						uint8_t day = getNumber(command->payload, command->len);
+						date.WeekDay = day;
+						rtcState = YEAR_CONFIG;
+						xQueueSend(hPrintQueue, &msg_rtc_yr, portMAX_DELAY);
+						break;}
+
+					case YEAR_CONFIG:{
+						uint8_t year = getNumber(command->payload, command->len);
+						date.Year = year;
+
+						if( !ValidateRtcInfo(NULL, &date))
+						{
+							RtcConfigureDate(&date);
+							xQueueSend(hPrintQueue,&msg_conf,portMAX_DELAY);
+							ShowTimeDate();
+						}
+						else
+							xQueueSend(hPrintQueue,&invalid_message,portMAX_DELAY);
+
+						currentProgramState = sMainMenu;
+						rtcState = DATE_CONFIG;
+						break;}
+
+					}
+					}
+
 
 					break;
 
-				case sRtcReport:
+				case sRtcReport:{
 					/*TODO: enable or disable RTC current time reporting over ITM printf */
-					break;
+					break;}
 
 			}// switch end
 
@@ -362,6 +407,7 @@ void printTask(void* parameters)
 	 return 0;
  }
 
+ // Converting ASCII to number by subtracting 48
  uint8_t getNumber(uint8_t * p, int len)
  {
 	 int value;

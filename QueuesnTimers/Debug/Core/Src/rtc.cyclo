@@ -1,4 +1,4 @@
 rtc.c:13:6:ShowTimeDate	2
 rtc.c:60:6:RtcConfigureTime	1
-rtc.c:67:6:RtcConfigureDate	1
-rtc.c:72:5:ValidateRtcInfo	10
+rtc.c:69:6:RtcConfigureDate	1
+rtc.c:74:5:ValidateRtcInfo	10
